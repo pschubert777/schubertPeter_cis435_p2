@@ -11,8 +11,6 @@ body{
     margin-right: auto;
     text-align: center;
 }
-
-
 /*Format of Tic Tac toe Grid*/
 #grid{
     float: left;
