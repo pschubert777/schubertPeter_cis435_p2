@@ -12,7 +12,7 @@ body{
     text-align: center;
 }
 /*Format of Tic Tac toe Grid*/
-#grid{
+main #grid{
     float: left;
     display:inline-grid;
     grid-template-columns: auto auto auto;
@@ -22,7 +22,7 @@ body{
     background-color: rgba(35, 128, 156, 0.459);
    
 }
-#grid p{
+main #grid p{
     text-align: center;
     border-top: 1px solid black;
     border-right: 1px solid black;
@@ -31,10 +31,10 @@ body{
     font-size: 200%;
     user-select: none;
 }
-#grid #q1,#grid  #q4,#grid  #q7{
+main #grid #q1,#grid  #q4,#grid  #q7{
     border-left: 1px solid black; 
 }
-#grid #q7,#grid  #q8,#grid  #q9{
+main #grid #q7,#grid  #q8,#grid  #q9{
     border-bottom: 1px solid black; 
 }
 /* End of Format of Tic Tac toe Grid*/
@@ -45,10 +45,10 @@ header{
 }
 footer{
     clear: both;
-    margin-top: 20%;
+    padding: 10px;
 }
 /* Menu Formatting */
-#menu{
+main #menu{
     text-align: left;
     background-color:rgb(243, 207, 87);
     box-shadow: 0px 0px 20px black;
@@ -58,7 +58,7 @@ footer{
     float: left;
     width:16%;
 }
-#menu #start_reset{
+main #menu #start_reset{
     width: 100%;
     text-align: center;
 }
