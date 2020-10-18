@@ -3,6 +3,7 @@ class Game{
 constructor(){
     this.game_in_progress =false;
     this.game_over=false;
+    this.players= new Array();
 
 }
 
@@ -21,7 +22,17 @@ function color_change(evt){
 function start_reset(evt){
    
     if(evt.target.value==="Start!"){
-        console.log('hello');
+    let human_v_human = document.getElementById('human_human');
+    let computer_v_human = document.getElementById('human_computer');
+        if(!human_v_human.checked && !computer_v_human.checked){
+            alert("Please Select a game mode!");
+        }
+        else{
+
+            mygame.
+        }
+
+
     }
     else if(evt.target.value==="Reset!"){
 
