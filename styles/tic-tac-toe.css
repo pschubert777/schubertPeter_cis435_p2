@@ -13,7 +13,6 @@ body{
 }
 /*Format of Tic Tac toe Grid*/
 main #grid{
-    
     display:grid;
     grid-template-columns: auto auto auto;
     width: 451px;
@@ -25,12 +24,11 @@ main #grid{
     
    
 }
-main #grid p{
+main #grid > p{
     text-align: center;
     border-top: 1px solid black;
     border-right: 1px solid black;
-    padding-top: 60px;
-    padding-bottom: 30px;
+    padding-top: 35%;
     font-size: 200%;
     user-select: none;
 }

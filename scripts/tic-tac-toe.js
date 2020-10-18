@@ -6,6 +6,7 @@ class human {
         else{
             this.x_or_o="X";
         }
+       
 }
 
 }
@@ -17,22 +18,64 @@ class computer {
         else{
             this.x_or_o="X";
         }
-  
     }
 
 }
 class Game{
     constructor(){
         this.game_in_progress =false;
-        this.game_over=false;
+        this.game_over=true;
         this.players= new Array();
+        this.game_board_w_section_id =[['q1', 'q2', 'q3'], ['q4', 'q5', 'q6'], ['q7', 'q8', 'q9']];
+        this.game_board; 
+        this.current_player;
         
+    }
+    reset_game(){
+        this.current_player=0;
+        this.game_board= [ [-1, -1,-1], [-1,-1,-1,], [-1,-1,-1]];
+    }
+     check_if_occupied=(id)=>{
+        for (let outer_index = 0; outer_index < 3; outer_index++) {
+            for (let inner_index = 0; inner_index < 3; inner_index++) {
+                if(this.game_board_w_section_id[outer_index][inner_index]===id && this.game_board[outer_index][inner_index] != -1){
+                    return true;
+                }
+                else if(this.game_board_w_section_id[outer_index][inner_index]===id&& this.game_board[outer_index][inner_index] == -1){
+
+                    return false;
+                }
+            }
+        }
+
+        return false;
+    }
+    submitSelection=(evt)=>{
+        let element_id=evt.target.id;
+        if(!this.check_if_occupied(element_id)){
+            console.log(this.players[this.current_player].x_or_o);
+            evt.target.innerHTML=this.players[this.current_player].x_or_o;
+            var pair =  new Object();
+            for (let outer_index = 0; outer_index < 3; outer_index++) {
+                for (let inner_index = 0; inner_index < 3; inner_index++) {
+                    if(this.game_board_w_section_id[outer_index][inner_index] ===element_id){
+                        pair.first_index = outer_index;
+                        pair.second_index= inner_index;
+                     }
+                } 
+            }
+
+        }
+       
+
+
 
     }
+  
     removeAttributes(){
         var blocks = this.grid.getElementsByTagName('p');
         for (let index = 0; index < blocks.length; index++) {
-            blocks[index].removeEventListener('click',color_change);
+            blocks[index].removeEventListener('click',mygame.submitSelection);
             if(blocks[index].hasAttribute('class')){
                 blocks[index].removeAttribute('class');
             }
@@ -41,7 +84,7 @@ class Game{
     addAttributes(){
         var blocks =this.grid.getElementsByTagName('p');
         for (let index = 0; index < blocks.length; index++) {
-            blocks[index].addEventListener('click',color_change);
+            blocks[index].addEventListener('click',mygame.submitSelection);
         }
     }
     hideRadioButtons(){
@@ -57,6 +100,7 @@ class Game{
         document.getElementById('human_computer').style.visibility='visible';
         document.getElementById('human_computer').nextElementSibling.innerHTML="Human vs Computer";
     }
+
 
 }
 let mygame = new Game();
@@ -80,8 +124,8 @@ function start_reset(evt){
         }
         else if(human_v_human.checked){
             let player_goes_first = Math.floor(Math.random()*2);
-            var variable_assignment = Math.floor(Math.random()*2);
-            let player1 = new human(variable_assignment)
+            let variable_assignment = Math.floor(Math.random()*2);
+            let player1 = new human(variable_assignment);
             let player2 = (variable_assignment ===0? new human(1): new human(0));
             
             // 0 for O and 1 for X, determining which goes first
@@ -103,11 +147,13 @@ function start_reset(evt){
             mygame.players.push(new human(1));
             mygame.players.push(new computer(0));
             mygame.game_in_progress=true;
+            
             computer_v_human.checked=false;
         }
         
         if(mygame.game_in_progress){
             evt.target.value= "Restart!";
+            mygame.game_over=false;
             mygame.addAttributes();
             mygame.hideRadioButtons();
         }
@@ -115,6 +161,7 @@ function start_reset(evt){
     }
     else if(evt.target.value==="Restart!"){
         mygame.game_in_progress=false;
+        mygame.game_over=true;
         mygame.removeAttributes();
         mygame.visibleRadioButtons();
         evt.target.value="Start!"
@@ -126,6 +173,7 @@ function start_reset(evt){
 
 window.addEventListener('load', function(){
     mygame.grid= document.getElementById('grid');
+    mygame.reset_game();
     document.getElementById('start_reset').addEventListener('click', start_reset);
 
     
