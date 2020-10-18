@@ -61,6 +61,8 @@ function start_reset(evt){
             }else{
             mygame.players.push(new human(0));
             }
+            mygame.game_in_progress = true;
+            evt.target.value= "Restart!";
         }
         else{
             var val = Math.floor(Math.random()*2);
@@ -70,12 +72,28 @@ function start_reset(evt){
             }else{
             mygame.players.push(new computer(0));
             }
+            mygame.game_in_progress=true;
+            evt.target.value= "Restart!";
         }
         
+        if(mygame.game_in_progress){
+            
+            const blocks=document.getElementById('grid').getElementsByTagName('p');
+            for (let index = 0; index < blocks.length; index++) {
+                blocks[index].addEventListener('click',color_change);
+            }
+
+            
+        }
 
     }
     else if(evt.target.value==="Restart!"){
-
+        mygame.game_in_progress=false;
+        const blocks=document.getElementById('grid').getElementsByTagName('p');
+        for (let index = 0; index < blocks.length; index++) {
+            blocks[index].removeEventListener('click',color_change);
+        }
+       evt.target.value="Start!"
     }
 
 }
@@ -84,11 +102,9 @@ function start_reset(evt){
 window.addEventListener('load', function(){
 
     document.getElementById('start_reset').addEventListener('click', start_reset);
-    const blocks=document.getElementById('grid').getElementsByTagName('p');
-    for (let index = 0; index < blocks.length; index++) {
-        blocks[index].addEventListener('click',color_change);
+
     
-    }
+    
 /*
  document.getElementById('q1').addEventListener('click',start);
  document.getElementsByTagName('main')[0].addEventListener('click', function(){
