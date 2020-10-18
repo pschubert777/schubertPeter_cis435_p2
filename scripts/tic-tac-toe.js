@@ -1,4 +1,30 @@
 
+
+
+
+class human {
+constructor(type){
+    if(type===0){
+        this.x_or_o="O";
+    }
+    else{
+        this.x_or_o="X";
+    }
+}
+
+}
+class computer {
+constructor(type){
+    if(type===0){
+        this.x_or_o="O";
+    }
+    else{
+        this.x_or_o="X";
+    }
+  
+}
+
+}
 class Game{
 constructor(){
     this.game_in_progress =false;
@@ -27,14 +53,28 @@ function start_reset(evt){
         if(!human_v_human.checked && !computer_v_human.checked){
             alert("Please Select a game mode!");
         }
-        else{
-
-            mygame.
+        else if(human_v_human.checked){
+            var val = Math.floor(Math.random()*2);
+            mygame.players.push(new human(val));
+            if(val ===0){
+            mygame.players.push(new human(1));
+            }else{
+            mygame.players.push(new human(0));
+            }
         }
-
+        else{
+            var val = Math.floor(Math.random()*2);
+            mygame.players.push(new human(val));
+            if(val ===0){
+            mygame.players.push(new computer(1));
+            }else{
+            mygame.players.push(new computer(0));
+            }
+        }
+        
 
     }
-    else if(evt.target.value==="Reset!"){
+    else if(evt.target.value==="Restart!"){
 
     }
 
