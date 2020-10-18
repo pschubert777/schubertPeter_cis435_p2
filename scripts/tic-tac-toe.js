@@ -79,30 +79,31 @@ function start_reset(evt){
             alert("Please Select a game mode!");
         }
         else if(human_v_human.checked){
-            var val = Math.floor(Math.random()*2);
-            mygame.players.push(new human(val));
-            if(val ===0){
-                mygame.players.push(new human(1));
+            let player_goes_first = Math.floor(Math.random()*2);
+            var variable_assignment = Math.floor(Math.random()*2);
+            let player1 = new human(variable_assignment)
+            let player2 = (variable_assignment ===0? new human(1): new human(0));
+            
+            // 0 for O and 1 for X, determining which goes first
+            if((player_goes_first ===0 && player1.x_or_o =="O") || (player_goes_first ===1 && player1.x_or_o =="X")){
+                mygame.players.push(player1);
+                mygame.players.push(player2);
             }
             else{
-                mygame.players.push(new human(0));
+                mygame.players.push(player2);
+                mygame.players.push(player1);
             }
+
             mygame.game_in_progress = true;
             human_v_human.checked=false;
             
         }
         else{
-            var val = Math.floor(Math.random()*2);
-            mygame.players.push(new human(val));
-            if(val ===0){
-                mygame.players.push(new computer(1));
-            }
-            else{
-                mygame.players.push(new computer(0));
-            }
+            // if computer v human, human is always X, Computer is O
+            mygame.players.push(new human(1));
+            mygame.players.push(new computer(0));
             mygame.game_in_progress=true;
             computer_v_human.checked=false;
-            
         }
         
         if(mygame.game_in_progress){
