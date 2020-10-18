@@ -38,6 +38,25 @@ class Game{
             }
         }
     }
+    addAttributes(){
+        var blocks =this.grid.getElementsByTagName('p');
+        for (let index = 0; index < blocks.length; index++) {
+            blocks[index].addEventListener('click',color_change);
+        }
+    }
+    hideRadioButtons(){
+        document.getElementById('human_human').style.visibility='hidden';
+        document.getElementById('human_human').nextElementSibling.innerHTML="";
+        document.getElementById('human_computer').style.visibility='hidden';
+        document.getElementById('human_computer').nextElementSibling.innerHTML="";
+       
+    }
+    visibleRadioButtons(){
+        document.getElementById('human_human').style.visibility='visible';
+        document.getElementById('human_human').nextElementSibling.innerHTML="Human vs Human";
+        document.getElementById('human_computer').style.visibility='visible';
+        document.getElementById('human_computer').nextElementSibling.innerHTML="Human vs Computer";
+    }
 
 }
 let mygame = new Game();
@@ -63,40 +82,42 @@ function start_reset(evt){
             var val = Math.floor(Math.random()*2);
             mygame.players.push(new human(val));
             if(val ===0){
-            mygame.players.push(new human(1));
-            }else{
-            mygame.players.push(new human(0));
+                mygame.players.push(new human(1));
+            }
+            else{
+                mygame.players.push(new human(0));
             }
             mygame.game_in_progress = true;
-            evt.target.value= "Restart!";
+            human_v_human.checked=false;
+            
         }
         else{
             var val = Math.floor(Math.random()*2);
             mygame.players.push(new human(val));
             if(val ===0){
-            mygame.players.push(new computer(1));
-            }else{
-            mygame.players.push(new computer(0));
+                mygame.players.push(new computer(1));
+            }
+            else{
+                mygame.players.push(new computer(0));
             }
             mygame.game_in_progress=true;
-            evt.target.value= "Restart!";
+            computer_v_human.checked=false;
+            
         }
         
         if(mygame.game_in_progress){
-            
-            const blocks=document.getElementById('grid').getElementsByTagName('p');
-            for (let index = 0; index < blocks.length; index++) {
-                blocks[index].addEventListener('click',color_change);
-            }
-
-            
+            evt.target.value= "Restart!";
+            mygame.addAttributes();
+            mygame.hideRadioButtons();
         }
 
     }
     else if(evt.target.value==="Restart!"){
         mygame.game_in_progress=false;
         mygame.removeAttributes();
-       evt.target.value="Start!"
+        mygame.visibleRadioButtons();
+        evt.target.value="Start!"
+        mygame.players=[];
     }
 
 }
