@@ -35,7 +35,7 @@ class Game{
         this.current_player=0;
         this.game_board= [ [-1, -1,-1], [-1,-1,-1,], [-1,-1,-1]];
     }
-     check_if_occupied=(id)=>{
+     check_if_occupied(id){
         for (let outer_index = 0; outer_index < 3; outer_index++) {
             for (let inner_index = 0; inner_index < 3; inner_index++) {
                 if(this.game_board_w_section_id[outer_index][inner_index]===id && this.game_board[outer_index][inner_index] != -1){
@@ -53,7 +53,6 @@ class Game{
     submitSelection=(evt)=>{
         let element_id=evt.target.id;
         if(!this.check_if_occupied(element_id)){
-            console.log(this.players[this.current_player].x_or_o);
             evt.target.innerHTML=this.players[this.current_player].x_or_o;
             var pair =  new Object();
             for (let outer_index = 0; outer_index < 3; outer_index++) {
