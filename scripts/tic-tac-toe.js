@@ -73,7 +73,7 @@ class Game{
     }
   
     removeAttributes(){
-        var blocks = this.grid.getElementsByTagName('p');
+        var blocks = this.grid.getElementsByTagName('span');
         for (let index = 0; index < blocks.length; index++) {
             blocks[index].removeEventListener('click',mygame.submitSelection);
             if(blocks[index].hasAttribute('class')){
@@ -82,7 +82,7 @@ class Game{
         }
     }
     addAttributes(){
-        var blocks =this.grid.getElementsByTagName('p');
+        var blocks =this.grid.getElementsByTagName('span');
         for (let index = 0; index < blocks.length; index++) {
             blocks[index].addEventListener('click',mygame.submitSelection);
         }
