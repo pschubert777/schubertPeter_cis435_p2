@@ -1,9 +1,11 @@
 class human {
     constructor(type){
         if(type===0){
+         this.numerical_x_or_o = type;
          this.x_or_o="O";
         }
         else{
+            this.numerical_x_or_o = type;
             this.x_or_o="X";
         }
        
@@ -13,14 +15,17 @@ class human {
 class computer {
     constructor(type){
         if(type===0){
+          this.numerical_x_or_o = type;
           this.x_or_o="O";
         }
         else{
+            this.numerical_x_or_o = type;
             this.x_or_o="X";
         }
     }
 
 }
+
 class Game{
     constructor(){
         this.game_in_progress =false;
@@ -28,12 +33,44 @@ class Game{
         this.players= new Array();
         this.game_board_w_section_id =[['q1', 'q2', 'q3'], ['q4', 'q5', 'q6'], ['q7', 'q8', 'q9']];
         this.game_board; 
-        this.current_player;
+        this.current_player =0;
         
     }
+    nextPlayer(){
+        if(this.current_player==0){
+            this.current_player+=1;
+        }
+        else{
+            this.current_player-=1;
+        }
+        
+        document.getElementsByTagName('main')[0].getElementsByTagName('p')[0].innerText ="It is "+ this.players[this.current_player].x_or_o+"'s turn."
+    }
+    computerSelectSquare(){
+        let possible_selections =[];
+        for(let i =0; i <3;i++){
+            for (let j = 0; j < 3; j++) {
+            }
+            if(this.game_board[i][j]===-1){
+                possible_selections.push({first_index:i, second_index:j});
+            }
+
+        }
+        const index_of_element_selected = Math.floor(Math.random()*possible_selections.length);
+        document.getElementById(this.game_board_w_section_id[index_of_element_selected.first_index][index_of_element_selected.second_index]).innerHTML=this.players[this.current_player].x_or_o;
+        this.game_board[index_of_element_selected.first_index][index_of_element_selected.second_index]=this.players[this.current_player].numerical_x_or_o;
+        
+
+
+    }
     reset_game(){
+        this.players=[];
         this.current_player=0;
         this.game_board= [ [-1, -1,-1], [-1,-1,-1,], [-1,-1,-1]];
+        mygame.game_in_progress=false;
+        mygame.game_over=true;
+
+        
     }
      check_if_occupied(id){
         for (let outer_index = 0; outer_index < 3; outer_index++) {
@@ -53,24 +90,23 @@ class Game{
     submitSelection=(evt)=>{
         let element_id=evt.target.id;
         if(!this.check_if_occupied(element_id)){
-            evt.target.innerHTML=this.players[this.current_player].x_or_o;
-            var pair =  new Object();
+            evt.target.innerText=this.players[this.current_player].x_or_o;
             for (let outer_index = 0; outer_index < 3; outer_index++) {
                 for (let inner_index = 0; inner_index < 3; inner_index++) {
                     if(this.game_board_w_section_id[outer_index][inner_index] ===element_id){
-                        pair.first_index = outer_index;
-                        pair.second_index= inner_index;
+                        this.game_board[outer_index][inner_index]=this.players[this.current_player].numerical_x_or_o;
                      }
                 } 
             }
 
+            this.nextPlayer();
         }
        
 
 
 
     }
-  
+    
     removeAttributes(){
         var blocks = this.grid.getElementsByTagName('span');
         for (let index = 0; index < blocks.length; index++) {
@@ -78,7 +114,9 @@ class Game{
             if(blocks[index].hasAttribute('class')){
                 blocks[index].removeAttribute('class');
             }
+            blocks[index].innerText="";
         }
+        document.getElementsByTagName('main')[0].getElementsByTagName('p')[0].innerText ="";
     }
     addAttributes(){
         var blocks =this.grid.getElementsByTagName('span');
@@ -88,16 +126,16 @@ class Game{
     }
     hideRadioButtons(){
         document.getElementById('human_human').style.visibility='hidden';
-        document.getElementById('human_human').nextElementSibling.innerHTML="";
+        document.getElementById('human_human').nextElementSibling.innerText="";
         document.getElementById('human_computer').style.visibility='hidden';
-        document.getElementById('human_computer').nextElementSibling.innerHTML="";
+        document.getElementById('human_computer').nextElementSibling.innerText="";
        
     }
     visibleRadioButtons(){
         document.getElementById('human_human').style.visibility='visible';
-        document.getElementById('human_human').nextElementSibling.innerHTML="Human vs Human";
+        document.getElementById('human_human').nextElementSibling.innerText="Human vs Human";
         document.getElementById('human_computer').style.visibility='visible';
-        document.getElementById('human_computer').nextElementSibling.innerHTML="Human vs Computer";
+        document.getElementById('human_computer').nextElementSibling.innerText="Human vs Computer";
     }
 
 
@@ -139,18 +177,29 @@ function start_reset(evt){
 
             mygame.game_in_progress = true;
             human_v_human.checked=false;
-            
+            mygame.game_mode="human_human";
         }
         else{
             // if computer v human, human is always X, Computer is O
-            mygame.players.push(new human(1));
-            mygame.players.push(new computer(0));
-            mygame.game_in_progress=true;
+            let player_goes_first = Math.floor(Math.random()*2);
+            let player1 = new human(1);
+            let player2 =new computer(0);
             
+            if((player_goes_first==0 && player1 =="O")|| (player_goes_first ===1 && player1.x_or_o =="X")){
+                mygame.players.push(player1);
+                mygame.players.push(player2);
+            }
+            else{
+                mygame.players.push(player2);
+                mygame.players.push(player1);
+            }
+            mygame.game_in_progress=true;
             computer_v_human.checked=false;
+            mygame.game_mode="computer_human"
         }
         
         if(mygame.game_in_progress){
+            document.getElementsByTagName('main')[0].getElementsByTagName('p')[0].innerText ="It is "+ mygame.players[mygame.current_player].x_or_o+"'s turn."
             evt.target.value= "Restart!";
             mygame.game_over=false;
             mygame.addAttributes();
@@ -159,12 +208,10 @@ function start_reset(evt){
 
     }
     else if(evt.target.value==="Restart!"){
-        mygame.game_in_progress=false;
-        mygame.game_over=true;
+        mygame.reset_game();
         mygame.removeAttributes();
         mygame.visibleRadioButtons();
         evt.target.value="Start!"
-        mygame.players=[];
     }
 
 }
