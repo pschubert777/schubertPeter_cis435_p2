@@ -56,9 +56,9 @@ class Game{
             }
 
         }
-        const index_of_element_selected = Math.floor(Math.random()*possible_selections.length);
-        document.getElementById(this.game_board_w_section_id[index_of_element_selected.first_index][index_of_element_selected.second_index]).innerHTML=this.players[this.current_player].x_or_o;
-        this.game_board[index_of_element_selected.first_index][index_of_element_selected.second_index]=this.players[this.current_player].numerical_x_or_o;
+        this.index_of_element_selected = Math.floor(Math.random()*possible_selections.length);
+        document.getElementById(this.game_board_w_section_id[this.index_of_element_selected.first_index][this.index_of_element_selected.second_index]).innerHTML=this.players[this.current_player].x_or_o;
+        this.game_board[this.index_of_element_selected.first_index][this.index_of_element_selected.second_index]=this.players[this.current_player].numerical_x_or_o;
         
 
 
@@ -69,10 +69,65 @@ class Game{
         this.game_board= [ [-1, -1,-1], [-1,-1,-1,], [-1,-1,-1]];
         mygame.game_in_progress=false;
         mygame.game_over=true;
-
-        
     }
-     check_if_occupied(id){
+    check_tic_tac_toe(){
+        // right horizontal
+        let counter = 0;
+        for (let i = this.index_of_element_selected.first_index; i < 3; i++) {
+            if(this.game_board[i][this.index_of_element_selected.second_index] === this.players[this.current_player].numerical_x_or_o){
+                counter++;
+            }
+        }
+        if(counter===3){return true;}
+
+        //left horizontal
+        counter =0;
+        for (let i = this.index_of_element_selected.first_index; i >= 0; i--) {
+            if(this.game_board[i][this.index_of_element_selected.second_index] === this.players[this.current_player].numerical_x_or_o){
+                counter++;
+            }
+            
+        }
+        if(counter===3){return true;}
+
+        // bottom vertical
+        counter=0;
+        for (let i = this.index_of_element_selected.second_index; i<3; i++) {
+            
+            if(this.game_board[this.index_of_element_selected.first_index][i] === this.players[this.current_player].numerical_x_or_o){
+                counter++;
+            }
+            
+            
+        }
+        if(counter===3){return true;}
+
+        // top vertical
+        counter=0;
+        for (let i = this.index_of_element_selected.second_index; i >= 0; i--) {
+            
+            if(this.game_board[this.index_of_element_selected.first_index][i] === this.players[this.current_player].numerical_x_or_o){
+                counter++;
+            }
+            
+        }
+        if(counter===3){return true;}
+        
+ 
+    }
+    check_game_board_is_full(){
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                if(this.game_board[i][j] === -1){
+                    return false;
+                }
+            }
+            
+        }
+        return true;
+    }
+    check_if_occupied(id)
+    {
         for (let outer_index = 0; outer_index < 3; outer_index++) {
             for (let inner_index = 0; inner_index < 3; inner_index++) {
                 if(this.game_board_w_section_id[outer_index][inner_index]===id && this.game_board[outer_index][inner_index] != -1){
