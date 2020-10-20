@@ -8,8 +8,8 @@ class human {
             this.numerical_x_or_o = type;
             this.x_or_o="X";
         }
-       
-}
+        this.player_type ="human";
+    }
 
 }
 class computer {
@@ -17,11 +17,13 @@ class computer {
         if(type===0){
           this.numerical_x_or_o = type;
           this.x_or_o="O";
+          
         }
         else{
             this.numerical_x_or_o = type;
             this.x_or_o="X";
         }
+        this.player_type ="computer";
     }
 
 }
@@ -51,7 +53,7 @@ class Game{
         for(let i =0; i <3;i++){
             for (let j = 0; j < 3; j++) {
             }
-            if(this.game_board[i][j]===-1){
+            if(this.game_board[i][j]=== -1){
                 possible_selections.push({first_index:i, second_index:j});
             }
 
@@ -70,50 +72,117 @@ class Game{
         mygame.game_in_progress=false;
         mygame.game_over=true;
     }
-    check_tic_tac_toe(){
-        // right horizontal
-        let counter = 0;
-        for (let i = this.index_of_element_selected.first_index; i < 3; i++) {
-            if(this.game_board[i][this.index_of_element_selected.second_index] === this.players[this.current_player].numerical_x_or_o){
-                counter++;
-            }
-        }
-        if(counter===3){return true;}
+    GameFinished=()=>{
+        this.reset_game();
+        this.removeAttributes();
+        this.toggleStartResetButtonVisibility();
+        this.togglePlayButtonVisibility();
+        document.getElementById('start_reset').value="Start!";
 
-        //left horizontal
-        counter =0;
-        for (let i = this.index_of_element_selected.first_index; i >= 0; i--) {
-            if(this.game_board[i][this.index_of_element_selected.second_index] === this.players[this.current_player].numerical_x_or_o){
-                counter++;
-            }
-            
-        }
-        if(counter===3){return true;}
 
-        // bottom vertical
-        counter=0;
-        for (let i = this.index_of_element_selected.second_index; i<3; i++) {
-            
-            if(this.game_board[this.index_of_element_selected.first_index][i] === this.players[this.current_player].numerical_x_or_o){
-                counter++;
-            }
-            
-            
-        }
-        if(counter===3){return true;}
-
+    }
+    check_tic_tac_toe(first_index,second_index){
         // top vertical
-        counter=0;
-        for (let i = this.index_of_element_selected.second_index; i >= 0; i--) {
-            
-            if(this.game_board[this.index_of_element_selected.first_index][i] === this.players[this.current_player].numerical_x_or_o){
-                counter++;
+        let counter_top = 0;
+        for (let i = first_index; i < 3; i++) {
+            if(this.game_board[i][second_index] === this.players[this.current_player].numerical_x_or_o){
+                counter_top++;
+            }
+        }
+        
+
+        //bottom vertical
+        let counter_bottom =0;
+        for (let i = first_index-1; i >= 0; i--) {
+            if(this.game_board[i][second_index] === this.players[this.current_player].numerical_x_or_o){
+                counter_bottom++;
             }
             
         }
-        if(counter===3){return true;}
+        if((counter_top+counter_bottom)===3){return true;}
+
+        // right horizontal
+        let counter_right=0;
+        for (let i = second_index; i<3; i++) {
+            
+            if(this.game_board[first_index][i] === this.players[this.current_player].numerical_x_or_o){
+                counter_right++
+            }
+            
+            
+        }
+
+        // left horizontal
+        let counter_left=0;
+        for (let i = second_index-1; i >= 0; i--) {
+            
+            if(this.game_board[first_index][i] === this.players[this.current_player].numerical_x_or_o){
+                counter_left++;
+            }
+            
+        }
+        if((counter_right+counter_left)===3){return true;}
+
+
         
+        // top right
+        let counter_top_right =0;
+        let i=first_index, j=second_index;
+        while( i  < 3&& j <3){
+            if(this.game_board[i][j] === this.players[this.current_player].numerical_x_or_o){
+
+                counter_top_right++;
+            }
+            i++;
+            j++;
+        }
+        //bottom left
+        let counter_bottom_left=0;
+        i=first_index-1;
+        j=second_index-1;
+        while( i  >=0 && j >=0){
+            if(this.game_board[i][j] === this.players[this.current_player].numerical_x_or_o){
+
+                counter_bottom_left++;
+            }
+            i--;
+            j--;
+        }
+        if((counter_bottom_left+counter_top_right)==3){
+            return true;
+        }
+
+        // top left
+        let counter_top_left =0;
+        i=first_index;
+        j=second_index;
+        while( i  < 3&& j >=0){
+            if(this.game_board[i][j] === this.players[this.current_player].numerical_x_or_o){
+
+                counter_top_left++;
+            }
+            i++;
+            j--;
+        }
+
+        
+        //bottom right
+        let counter_bottom_right=0;
+        i=first_index-1;
+        j=second_index-1;
+        while( i  >=0 && j <3){
+            if(this.game_board[i][j] === this.players[this.current_player].numerical_x_or_o){
+
+                counter_bottom_right++;
+            }
+            i--;
+            j++;
+        }
+        if((counter_top_left+counter_bottom_right)==3){
+            return true;
+        }
  
+        return false;
     }
     check_game_board_is_full(){
         for (let i = 0; i < 3; i++) {
@@ -144,17 +213,28 @@ class Game{
     }
     submitSelection=(evt)=>{
         let element_id=evt.target.id;
+        let first_index=0, second_index =0;
         if(!this.check_if_occupied(element_id)){
             evt.target.innerText=this.players[this.current_player].x_or_o;
             for (let outer_index = 0; outer_index < 3; outer_index++) {
                 for (let inner_index = 0; inner_index < 3; inner_index++) {
                     if(this.game_board_w_section_id[outer_index][inner_index] ===element_id){
+                        first_index= outer_index;
+                        second_index = inner_index
                         this.game_board[outer_index][inner_index]=this.players[this.current_player].numerical_x_or_o;
                      }
                 } 
             }
 
-            this.nextPlayer();
+            if(this.check_tic_tac_toe(first_index, second_index) || this.check_game_board_is_full()){
+                this.GameFinished();
+            }
+            else{
+                this.nextPlayer();
+                if(this.players[this.current_player].player_type=="computer"){
+                    setTimeout(this.computerSelectSquare, 2000);
+                }
+            }
         }
        
 
@@ -166,9 +246,11 @@ class Game{
         var blocks = this.grid.getElementsByTagName('span');
         for (let index = 0; index < blocks.length; index++) {
             blocks[index].removeEventListener('click',mygame.submitSelection);
-            if(blocks[index].hasAttribute('class')){
-                blocks[index].removeAttribute('class');
-            }
+        }
+    }
+    setGridBlank(){
+        var blocks = this.grid.getElementsByTagName('span');
+        for (let index = 0; index < blocks.length; index++) {
             blocks[index].innerText="";
         }
         document.getElementsByTagName('main')[0].getElementsByTagName('p')[0].innerText ="";
@@ -192,7 +274,23 @@ class Game{
         document.getElementById('human_computer').style.visibility='visible';
         document.getElementById('human_computer').nextElementSibling.innerText="Human vs Computer";
     }
-
+    togglePlayButtonVisibility(){
+        document.getElementById('play_again').style.visibility = 'hidden';
+        if(document.getElementById('play_again').style.visibility === 'hidden'){
+            document.getElementById('play_again').style.visibility = 'visible';
+        }
+        else{
+            document.getElementById('play_again').style.visibility = 'hidden';
+        }
+    }
+    toggleStartResetButtonVisibility(){
+        if(document.getElementById('start_reset').style.visibility === 'hidden'){
+            document.getElementById('start_reset').style.visibility = 'visible';
+        }
+        else{
+            document.getElementById('start_reset').style.visibility = 'hidden';
+        }
+    }
 
 }
 let mygame = new Game();
@@ -265,6 +363,7 @@ function start_reset(evt){
     else if(evt.target.value==="Restart!"){
         mygame.reset_game();
         mygame.removeAttributes();
+        mygame.setGridBlank();
         mygame.visibleRadioButtons();
         evt.target.value="Start!"
     }
@@ -276,6 +375,13 @@ window.addEventListener('load', function(){
     mygame.grid= document.getElementById('grid');
     mygame.reset_game();
     document.getElementById('start_reset').addEventListener('click', start_reset);
+    document.getElementById('play_again').addEventListener('click', function(){
+       mygame.setGridBlank();
+       mygame.togglePlayButtonVisibility();
+       mygame.toggleStartResetButtonVisibility();
+       mygame.visibleRadioButtons();
+    });
+
 
     
     
