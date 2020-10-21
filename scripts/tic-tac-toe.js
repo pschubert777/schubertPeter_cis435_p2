@@ -176,7 +176,7 @@ class Game{
         let check_if_player_won = this.check_tic_tac_toe(index_of_element_selected.first_index, index_of_element_selected.second_index);
         
         if(check_if_player_won|| check_gameboard){
-            this.Counter.stopTimer();
+            this.counter.stopTimer();
             if(check_if_player_won){
                 this.GameFinished(this.players[this.current_player].player_type, "win",this.current_player);
             }
