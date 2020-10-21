@@ -420,17 +420,17 @@ function start_reset(evt){
     }
 
 }
-
+function play_again(){
+    mygame.DOM_manipulation.setGridBlank();
+    mygame.DOM_manipulation.togglePlayButtonVisibility();
+    mygame.DOM_manipulation.toggleStartResetButtonVisibility();
+    mygame.DOM_manipulation.visibleRadioButtons();
+}
 
 window.addEventListener('load', function(){
     mygame.DOM_manipulation = new DOM_manipulation();
     mygame.reset_game();
     mygame.DOM_manipulation.togglePlayButtonVisibility();
     document.getElementById('start_reset').addEventListener('click', start_reset);
-    document.getElementById('play_again').addEventListener('click', function(){
-       mygame.DOM_manipulation.setGridBlank();
-       mygame.DOM_manipulation.togglePlayButtonVisibility();
-       mygame.DOM_manipulation.toggleStartResetButtonVisibility();
-       mygame.DOM_manipulation.visibleRadioButtons();
-    });
+    document.getElementById('play_again').addEventListener('click', play_again);
 });
