@@ -27,7 +27,88 @@ class computer {
     }
 
 }
-
+class DOM_manipulation{
+    constructor(){
+        this.grid=document.getElementById('grid');
+        this.human_human_radio_button = document.getElementById('human_human');
+        this.human_computer_radio_button = document.getElementById('human_computer');
+        this.play_again_button = document.getElementById('play_again');
+        this.start_reset_button = document.getElementById('start_reset');
+        this.player_turn_paragraph_status =document.getElementsByTagName('main')[0].getElementsByTagName('p')[0];
+     
+    }
+ 
+    removeAttributes(){
+        var blocks = this.grid.getElementsByTagName('span');
+        for (let index = 0; index < blocks.length; index++) {
+            blocks[index].removeEventListener('click',mygame.submitSelection);
+        }
+    }
+    setGridBlank(){
+        var blocks = this.grid.getElementsByTagName('span');
+        for (let index = 0; index < blocks.length; index++) {
+            blocks[index].innerText="";
+        }
+        this.player_turn_paragraph_status.innerText ="";
+    }
+    addAttributes(){
+        var blocks =this.grid.getElementsByTagName('span');
+        for (let index = 0; index < blocks.length; index++) {
+            blocks[index].addEventListener('click',mygame.submitSelection);
+        }
+    }
+    hideRadioButtons(){
+        this.human_human_radio_button.style.visibility='hidden';
+        this.human_human_radio_button.nextElementSibling.innerText="";
+        this.human_computer_radio_button.style.visibility='hidden';
+        this.human_computer_radio_button.nextElementSibling.innerText="";
+       
+    }
+    visibleRadioButtons(){
+        this.human_human_radio_button.style.visibility='visible';
+        this.human_human_radio_button.nextElementSibling.innerText="Human vs Human";
+        this.human_computer_radio_button.style.visibility='visible';
+        this.human_computer_radio_button.nextElementSibling.innerText="Human vs Computer";
+    }
+    humanVHumanRadioButtonChecked(){
+        return this.human_human_radio_button.checked;
+    }
+    humanVComputerRadioButtonChecked(){
+        return this.human_computer_radio_button.checked;
+    }
+    toggleHumanComputerRadioButtonValue(bool_value){
+        this.human_computer_radio_button.checked=bool_value;
+    }
+    toggleHumanHumanRadioButtonValue(bool_value){
+        this.human_human_radio_button.checked=bool_value;
+    }
+    togglePlayButtonVisibility(){
+        
+        if(this.play_again_button.style.visibility === 'hidden'){
+            this.play_again_button.style.visibility = 'visible';
+        }
+        else{
+            this.play_again_button.style.visibility = 'hidden';
+        }
+    }
+    toggleStartResetButtonVisibility(){
+        if(this.start_reset_button.style.visibility === 'hidden'){
+            this.start_reset_button.style.visibility = 'visible';
+        }
+        else{
+            this.start_reset_button.style.visibility = 'hidden';
+        }
+    }
+    updatePlayerTurn(string_val){
+        this.player_turn_paragraph_status.innerText = string_val;
+    }
+    updateStartResetValue(string_val){
+        this.start_reset_button.value = string_val;
+    }
+    updateGridSquare(square_id, x_or_o){
+        document.getElementById(square_id).innerHTML= x_or_o;
+    }
+}
 class Game{
     constructor(){
         this.game_in_progress =false;
@@ -46,7 +127,7 @@ class Game{
             this.current_player-=1;
         }
         
-        document.getElementsByTagName('main')[0].getElementsByTagName('p')[0].innerText ="It is "+ this.players[this.current_player].x_or_o+"'s turn."
+        this.DOM_manipulation.updatePlayerTurn("It is "+ this.players[this.current_player].x_or_o+"'s turn.");
     }
     computerSelectSquare(){
         let possible_selections =[];
@@ -59,7 +140,8 @@ class Game{
 
         }
         this.index_of_element_selected = Math.floor(Math.random()*possible_selections.length);
-        document.getElementById(this.game_board_w_section_id[this.index_of_element_selected.first_index][this.index_of_element_selected.second_index]).innerHTML=this.players[this.current_player].x_or_o;
+
+        this.DOM_manipulation.updateGridSquare(this.game_board_w_section_id[this.index_of_element_selected.first_index][this.index_of_element_selected.second_index], this.players[this.current_player].x_or_o) 
         this.game_board[this.index_of_element_selected.first_index][this.index_of_element_selected.second_index]=this.players[this.current_player].numerical_x_or_o;
         
 
@@ -73,11 +155,14 @@ class Game{
         mygame.game_over=true;
     }
     GameFinished=()=>{
+       
         this.reset_game();
-        this.removeAttributes();
-        this.toggleStartResetButtonVisibility();
-        this.togglePlayButtonVisibility();
-        document.getElementById('start_reset').value="Start!";
+        // DOM manipulation
+        
+        this.DOM_manipulation.removeAttributes();
+        this.DOM_manipulation.toggleStartResetButtonVisibility();
+        this.DOM_manipulation.togglePlayButtonVisibility();
+        this.DOM_manipulation.updateStartResetValue("Start!");
 
 
     }
@@ -169,7 +254,7 @@ class Game{
         //bottom right
         let counter_bottom_right=0;
         i=first_index-1;
-        j=second_index-1;
+        j=second_index+1;
         while( i  >=0 && j <3){
             if(this.game_board[i][j] === this.players[this.current_player].numerical_x_or_o){
 
@@ -241,78 +326,20 @@ class Game{
 
 
     }
-    
-    removeAttributes(){
-        var blocks = this.grid.getElementsByTagName('span');
-        for (let index = 0; index < blocks.length; index++) {
-            blocks[index].removeEventListener('click',mygame.submitSelection);
-        }
-    }
-    setGridBlank(){
-        var blocks = this.grid.getElementsByTagName('span');
-        for (let index = 0; index < blocks.length; index++) {
-            blocks[index].innerText="";
-        }
-        document.getElementsByTagName('main')[0].getElementsByTagName('p')[0].innerText ="";
-    }
-    addAttributes(){
-        var blocks =this.grid.getElementsByTagName('span');
-        for (let index = 0; index < blocks.length; index++) {
-            blocks[index].addEventListener('click',mygame.submitSelection);
-        }
-    }
-    hideRadioButtons(){
-        document.getElementById('human_human').style.visibility='hidden';
-        document.getElementById('human_human').nextElementSibling.innerText="";
-        document.getElementById('human_computer').style.visibility='hidden';
-        document.getElementById('human_computer').nextElementSibling.innerText="";
-       
-    }
-    visibleRadioButtons(){
-        document.getElementById('human_human').style.visibility='visible';
-        document.getElementById('human_human').nextElementSibling.innerText="Human vs Human";
-        document.getElementById('human_computer').style.visibility='visible';
-        document.getElementById('human_computer').nextElementSibling.innerText="Human vs Computer";
-    }
-    togglePlayButtonVisibility(){
-        document.getElementById('play_again').style.visibility = 'hidden';
-        if(document.getElementById('play_again').style.visibility === 'hidden'){
-            document.getElementById('play_again').style.visibility = 'visible';
-        }
-        else{
-            document.getElementById('play_again').style.visibility = 'hidden';
-        }
-    }
-    toggleStartResetButtonVisibility(){
-        if(document.getElementById('start_reset').style.visibility === 'hidden'){
-            document.getElementById('start_reset').style.visibility = 'visible';
-        }
-        else{
-            document.getElementById('start_reset').style.visibility = 'hidden';
-        }
-    }
+   
 
 }
 let mygame = new Game();
 
-function color_change(evt){
-    if(evt.target.hasAttribute('class')){
-        evt.target.removeAttribute('class');
-    }
-    else{
-        evt.target.setAttribute('class', 'change_color');
-    }
-}
 function start_reset(evt){
    
     if(evt.target.value==="Start!"){
-        let human_v_human = document.getElementById('human_human');
-        let computer_v_human = document.getElementById('human_computer');
+       
 
-        if(!human_v_human.checked && !computer_v_human.checked){
+        if(!mygame.DOM_manipulation.humanVHumanRadioButtonChecked() && !mygame.DOM_manipulation.humanVComputerRadioButtonChecked()){
             alert("Please Select a game mode!");
         }
-        else if(human_v_human.checked){
+        else if(mygame.DOM_manipulation.humanVHumanRadioButtonChecked()){
             let player_goes_first = Math.floor(Math.random()*2);
             let variable_assignment = Math.floor(Math.random()*2);
             let player1 = new human(variable_assignment);
@@ -329,8 +356,8 @@ function start_reset(evt){
             }
 
             mygame.game_in_progress = true;
-            human_v_human.checked=false;
             mygame.game_mode="human_human";
+            mygame.DOM_manipulation.toggleHumanHumanRadioButtonValue(false);
         }
         else{
             // if computer v human, human is always X, Computer is O
@@ -347,24 +374,31 @@ function start_reset(evt){
                 mygame.players.push(player1);
             }
             mygame.game_in_progress=true;
-            computer_v_human.checked=false;
             mygame.game_mode="computer_human"
+            mygame.DOM_manipulation.toggleHumanComputerRadioButtonValue(false);
         }
         
         if(mygame.game_in_progress){
-            document.getElementsByTagName('main')[0].getElementsByTagName('p')[0].innerText ="It is "+ mygame.players[mygame.current_player].x_or_o+"'s turn."
-            evt.target.value= "Restart!";
+          
             mygame.game_over=false;
-            mygame.addAttributes();
-            mygame.hideRadioButtons();
+
+            //DOM manipulation
+            mygame.DOM_manipulation.addAttributes();
+            mygame.DOM_manipulation.hideRadioButtons();
+            mygame.DOM_manipulation.updateStartResetValue("Restart!");
+            mygame.DOM_manipulation.updatePlayerTurn("It is "+ mygame.players[mygame.current_player].x_or_o+"'s turn.");
+            
         }
 
     }
     else if(evt.target.value==="Restart!"){
         mygame.reset_game();
-        mygame.removeAttributes();
-        mygame.setGridBlank();
-        mygame.visibleRadioButtons();
+
+
+        // DOM manipulation
+        mygame.DOM_manipulation.removeAttributes();
+        mygame.DOM_manipulation.setGridBlank();
+        mygame.DOM_manipulation.visibleRadioButtons();
         evt.target.value="Start!"
     }
 
@@ -372,25 +406,14 @@ function start_reset(evt){
 
 
 window.addEventListener('load', function(){
-    mygame.grid= document.getElementById('grid');
+    mygame.DOM_manipulation = new DOM_manipulation();
     mygame.reset_game();
+    mygame.DOM_manipulation.togglePlayButtonVisibility();
     document.getElementById('start_reset').addEventListener('click', start_reset);
     document.getElementById('play_again').addEventListener('click', function(){
-       mygame.setGridBlank();
-       mygame.togglePlayButtonVisibility();
-       mygame.toggleStartResetButtonVisibility();
-       mygame.visibleRadioButtons();
+       mygame.DOM_manipulation.setGridBlank();
+       mygame.DOM_manipulation.togglePlayButtonVisibility();
+       mygame.DOM_manipulation.toggleStartResetButtonVisibility();
+       mygame.DOM_manipulation.visibleRadioButtons();
     });
-
-
-    
-    
-/*
- document.getElementById('q1').addEventListener('click',start);
- document.getElementsByTagName('main')[0].addEventListener('click', function(){
-
-console.log('hello');
- });
-
-*/
 });
