@@ -129,22 +129,30 @@ class Game{
         
         this.DOM_manipulation.updatePlayerTurn("It is "+ this.players[this.current_player].x_or_o+"'s turn.");
     }
-    computerSelectSquare(){
+    computerSelectSquare=()=>{
         let possible_selections =[];
         for(let i =0; i <3;i++){
             for (let j = 0; j < 3; j++) {
+                if(this.game_board[i][j]=== -1){
+                    possible_selections.push({first_index:i, second_index:j});
+                }
             }
-            if(this.game_board[i][j]=== -1){
-                possible_selections.push({first_index:i, second_index:j});
-            }
+           
 
         }
-        this.index_of_element_selected = Math.floor(Math.random()*possible_selections.length);
+        let index_of_element_selected = possible_selections[Math.floor(Math.random()*possible_selections.length)];
 
-        this.DOM_manipulation.updateGridSquare(this.game_board_w_section_id[this.index_of_element_selected.first_index][this.index_of_element_selected.second_index], this.players[this.current_player].x_or_o) 
-        this.game_board[this.index_of_element_selected.first_index][this.index_of_element_selected.second_index]=this.players[this.current_player].numerical_x_or_o;
+        this.DOM_manipulation.updateGridSquare(this.game_board_w_section_id[index_of_element_selected.first_index][index_of_element_selected.second_index], this.players[this.current_player].x_or_o) 
+        this.game_board[index_of_element_selected.first_index][index_of_element_selected.second_index]=this.players[this.current_player].numerical_x_or_o;
+       
+        if(this.check_tic_tac_toe(index_of_element_selected.first_index, index_of_element_selected.second_index) || this.check_game_board_is_full()){
+            this.GameFinished(this.players[this.current_player].player_type);
+        }
+        else{
+            this.nextPlayer();
+            this.DOM_manipulation.addAttributes();
+        }
         
-
 
     }
     reset_game(){
@@ -154,12 +162,12 @@ class Game{
         mygame.game_in_progress=false;
         mygame.game_over=true;
     }
-    GameFinished=()=>{
+    GameFinished=(player_type)=>{
        
+        
         this.reset_game();
         // DOM manipulation
-        
-        this.DOM_manipulation.removeAttributes();
+        if(player_type === 'human'){  this.DOM_manipulation.removeAttributes(); }
         this.DOM_manipulation.toggleStartResetButtonVisibility();
         this.DOM_manipulation.togglePlayButtonVisibility();
         this.DOM_manipulation.updateStartResetValue("Start!");
@@ -297,10 +305,10 @@ class Game{
         return false;
     }
     submitSelection=(evt)=>{
-        let element_id=evt.target.id;
-        let first_index=0, second_index =0;
+        let first_index=0, second_index =0, element_id = evt.target.id;
         if(!this.check_if_occupied(element_id)){
-            evt.target.innerText=this.players[this.current_player].x_or_o;
+           // evt.target.innerText=this.players[this.current_player].x_or_o;
+            this.DOM_manipulation.updateGridSquare(element_id,this.players[this.current_player].x_or_o)
             for (let outer_index = 0; outer_index < 3; outer_index++) {
                 for (let inner_index = 0; inner_index < 3; inner_index++) {
                     if(this.game_board_w_section_id[outer_index][inner_index] ===element_id){
@@ -312,11 +320,12 @@ class Game{
             }
 
             if(this.check_tic_tac_toe(first_index, second_index) || this.check_game_board_is_full()){
-                this.GameFinished();
+                this.GameFinished(this.players[this.current_player].player_type);
             }
             else{
                 this.nextPlayer();
-                if(this.players[this.current_player].player_type=="computer"){
+                if(this.players[this.current_player].player_type==="computer"){
+                    this.DOM_manipulation.removeAttributes();
                     setTimeout(this.computerSelectSquare, 2000);
                 }
             }
@@ -339,57 +348,65 @@ function start_reset(evt){
         if(!mygame.DOM_manipulation.humanVHumanRadioButtonChecked() && !mygame.DOM_manipulation.humanVComputerRadioButtonChecked()){
             alert("Please Select a game mode!");
         }
-        else if(mygame.DOM_manipulation.humanVHumanRadioButtonChecked()){
-            let player_goes_first = Math.floor(Math.random()*2);
-            let variable_assignment = Math.floor(Math.random()*2);
-            let player1 = new human(variable_assignment);
-            let player2 = (variable_assignment ===0? new human(1): new human(0));
-            
-            // 0 for O and 1 for X, determining which goes first
-            if((player_goes_first ===0 && player1.x_or_o =="O") || (player_goes_first ===1 && player1.x_or_o =="X")){
-                mygame.players.push(player1);
-                mygame.players.push(player2);
+        else if(mygame.DOM_manipulation.humanVHumanRadioButtonChecked || mygame.DOM_manipulation.humanVComputerRadioButtonChecked()){
+
+            if(mygame.DOM_manipulation.humanVHumanRadioButtonChecked()){
+                let player_goes_first = Math.floor(Math.random()*2);
+                let variable_assignment = Math.floor(Math.random()*2);
+                let player1 = new human(variable_assignment);
+                let player2 = (variable_assignment ===0? new human(1): new human(0));
+                
+                // 0 for O and 1 for X, determining which goes first
+                if((player_goes_first ===0 && player1.x_or_o =="O") || (player_goes_first ===1 && player1.x_or_o =="X")){
+                    mygame.players.push(player1);
+                    mygame.players.push(player2);
+                }
+                else{
+                    mygame.players.push(player2);
+                    mygame.players.push(player1);
+                }
+    
+                mygame.game_in_progress = true;
+                mygame.game_mode="human_human";
+                mygame.DOM_manipulation.toggleHumanHumanRadioButtonValue(false);
             }
             else{
-                mygame.players.push(player2);
-                mygame.players.push(player1);
+                // if computer v human, human is always X, Computer is O
+                let player_goes_first = Math.floor(Math.random()*2);
+                let player1 = new human(1);
+                let player2 =new computer(0);
+                
+                if((player_goes_first==0 && player1 =="O")|| (player_goes_first ===1 && player1.x_or_o =="X")){
+                    mygame.players.push(player1);
+                    mygame.players.push(player2);
+                }
+                else{
+                    mygame.players.push(player2);
+                    mygame.players.push(player1);
+                }
+                mygame.game_in_progress=true;
+                mygame.game_mode="computer_human"
+                mygame.DOM_manipulation.toggleHumanComputerRadioButtonValue(false);
             }
 
-            mygame.game_in_progress = true;
-            mygame.game_mode="human_human";
-            mygame.DOM_manipulation.toggleHumanHumanRadioButtonValue(false);
-        }
-        else{
-            // if computer v human, human is always X, Computer is O
-            let player_goes_first = Math.floor(Math.random()*2);
-            let player1 = new human(1);
-            let player2 =new computer(0);
-            
-            if((player_goes_first==0 && player1 =="O")|| (player_goes_first ===1 && player1.x_or_o =="X")){
-                mygame.players.push(player1);
-                mygame.players.push(player2);
-            }
-            else{
-                mygame.players.push(player2);
-                mygame.players.push(player1);
-            }
-            mygame.game_in_progress=true;
-            mygame.game_mode="computer_human"
-            mygame.DOM_manipulation.toggleHumanComputerRadioButtonValue(false);
-        }
-        
-        if(mygame.game_in_progress){
+            if(mygame.game_in_progress){
           
-            mygame.game_over=false;
-
-            //DOM manipulation
-            mygame.DOM_manipulation.addAttributes();
-            mygame.DOM_manipulation.hideRadioButtons();
-            mygame.DOM_manipulation.updateStartResetValue("Restart!");
-            mygame.DOM_manipulation.updatePlayerTurn("It is "+ mygame.players[mygame.current_player].x_or_o+"'s turn.");
-            
+                mygame.game_over=false;
+    
+                //DOM manipulation
+                mygame.DOM_manipulation.addAttributes();
+                mygame.DOM_manipulation.hideRadioButtons();
+                mygame.DOM_manipulation.updateStartResetValue("Restart!");
+                mygame.DOM_manipulation.updatePlayerTurn("It is "+ mygame.players[mygame.current_player].x_or_o+"'s turn.");
+                
+            }
+            if(mygame.players[mygame.current_player].player_type==='computer'){
+                mygame.DOM_manipulation.removeAttributes();
+                setTimeout(mygame.computerSelectSquare, 2000);
+               
+            }
         }
-
+       
     }
     else if(evt.target.value==="Restart!"){
         mygame.reset_game();
