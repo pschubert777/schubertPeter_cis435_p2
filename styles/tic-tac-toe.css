@@ -78,11 +78,11 @@ main #menu{
 }
 main #menu #start_reset {
     height: 30px;
-    width: 70px;
+    width: 76px;
 }
 main #menu #play_again{
     height: 30px;
-    width: 90px;
+    width: 96px;
 }
 
 /* End of Paragraph formatting of game status*/
