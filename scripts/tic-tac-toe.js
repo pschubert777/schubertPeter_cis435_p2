@@ -145,8 +145,19 @@ class Game{
         this.DOM_manipulation.updateGridSquare(this.game_board_w_section_id[index_of_element_selected.first_index][index_of_element_selected.second_index], this.players[this.current_player].x_or_o) 
         this.game_board[index_of_element_selected.first_index][index_of_element_selected.second_index]=this.players[this.current_player].numerical_x_or_o;
        
-        if(this.check_tic_tac_toe(index_of_element_selected.first_index, index_of_element_selected.second_index) || this.check_game_board_is_full()){
-            this.GameFinished(this.players[this.current_player].player_type);
+
+        let check_gameboard = this.check_game_board_is_full();
+        let check_if_player_won = this.check_tic_tac_toe(index_of_element_selected.first_index, index_of_element_selected.second_index);
+        
+        if(check_if_player_won|| check_gameboard){
+
+            if(check_if_player_won){
+                this.GameFinished(this.players[this.current_player].player_type, "win",this.current_player);
+            }
+            else{
+                this.GameFinished(this.players[this.current_player].player_type, "tie");
+            }
+            
         }
         else{
             this.nextPlayer();
@@ -162,11 +173,12 @@ class Game{
         mygame.game_in_progress=false;
         mygame.game_over=true;
     }
-    GameFinished=(player_type)=>{
+    GameFinished=(player_type, type_of_game_ending, player_number =-1)=>{
        
         
         this.reset_game();
         // DOM manipulation
+        if(type_of_game_ending==="win"){this.DOM_manipulation.updatePlayerTurn('Player ' + (player_number+1)+ ' won!')}else{ this.DOM_manipulation.updatePlayerTurn('The game is tied!')}
         if(player_type === 'human'){  this.DOM_manipulation.removeAttributes(); }
         this.DOM_manipulation.toggleStartResetButtonVisibility();
         this.DOM_manipulation.togglePlayButtonVisibility();
@@ -318,9 +330,19 @@ class Game{
                      }
                 } 
             }
+            
+            let check_gameboard = this.check_game_board_is_full();
+            let check_if_player_won = this.check_tic_tac_toe(first_index, second_index);
 
-            if(this.check_tic_tac_toe(first_index, second_index) || this.check_game_board_is_full()){
-                this.GameFinished(this.players[this.current_player].player_type);
+            if(check_if_player_won|| check_gameboard){
+
+                if(check_if_player_won){
+                    this.GameFinished(this.players[this.current_player].player_type, "win",this.current_player);
+                }
+                else{
+                    this.GameFinished(this.players[this.current_player].player_type, "tie");
+                }
+                
             }
             else{
                 this.nextPlayer();
