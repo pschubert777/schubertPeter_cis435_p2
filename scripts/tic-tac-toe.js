@@ -1,3 +1,30 @@
+class Counter{
+
+constructor(){
+    this.timer;
+    this.secCounter=0;
+    this.minCounter=0;
+    this.counterElement = document.getElementById("counter");
+}
+
+stopTimer(){
+    clearInterval(this.timer);
+    this.secCounter=0;
+    this.minCounter=0;
+    
+}
+
+count(){
+    this.counterElement.innerText= 'Timer: 0 min  0 sec';
+this.timer = setInterval(() => {
+    this.secCounter++;
+    var x =this.secCounter %60;
+    if(this.secCounter %60 ===0){  this.minCounter++; this.secCounter=0;}
+    this.counterElement.innerText= 'Timer: '+ this.minCounter+ ' min  '+this.secCounter+' sec';
+}, 1000);
+
+}
+}
 class human {
     constructor(type){
         if(type===0){
@@ -35,7 +62,6 @@ class DOM_manipulation{
         this.play_again_button = document.getElementById('play_again');
         this.start_reset_button = document.getElementById('start_reset');
         this.player_turn_paragraph_status =document.getElementsByTagName('main')[0].getElementsByTagName('p')[0];
-     
     }
  
     removeAttributes(){
@@ -150,7 +176,7 @@ class Game{
         let check_if_player_won = this.check_tic_tac_toe(index_of_element_selected.first_index, index_of_element_selected.second_index);
         
         if(check_if_player_won|| check_gameboard){
-
+            this.Counter.stopTimer();
             if(check_if_player_won){
                 this.GameFinished(this.players[this.current_player].player_type, "win",this.current_player);
             }
@@ -335,7 +361,7 @@ class Game{
             let check_if_player_won = this.check_tic_tac_toe(first_index, second_index);
 
             if(check_if_player_won|| check_gameboard){
-
+                this.counter.stopTimer();
                 if(check_if_player_won){
                     this.GameFinished(this.players[this.current_player].player_type, "win",this.current_player);
                 }
@@ -410,7 +436,8 @@ function start_reset(evt){
                 mygame.game_mode="computer_human"
                 mygame.DOM_manipulation.toggleHumanComputerRadioButtonValue(false);
             }
-
+            // start timer
+            mygame.counter.count();
             if(mygame.game_in_progress){
           
                 mygame.game_over=false;
@@ -422,6 +449,7 @@ function start_reset(evt){
                 mygame.DOM_manipulation.updatePlayerTurn("It is "+ mygame.players[mygame.current_player].x_or_o+"'s turn.");
                 
             }
+
             if(mygame.players[mygame.current_player].player_type==='computer'){
                 mygame.DOM_manipulation.removeAttributes();
                 setTimeout(mygame.computerSelectSquare, 2000);
@@ -433,7 +461,8 @@ function start_reset(evt){
     else if(evt.target.value==="Restart!"){
         mygame.reset_game();
 
-
+        // stop counter
+        mygame.counter.stopTimer();
         // DOM manipulation
         mygame.DOM_manipulation.removeAttributes();
         mygame.DOM_manipulation.setGridBlank();
@@ -451,6 +480,7 @@ function play_again(){
 
 window.addEventListener('load', function(){
     mygame.DOM_manipulation = new DOM_manipulation();
+    mygame.counter = new Counter();
     mygame.reset_game();
     mygame.DOM_manipulation.togglePlayButtonVisibility();
     document.getElementById('start_reset').addEventListener('click', start_reset);
